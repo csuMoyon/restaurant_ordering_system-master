@@ -58,17 +58,42 @@ public class FrontServiceImpl implements FrontService {
 
     public CommonResponse<String> modifyUser(String userId,String password,String character)
     {
-
+        User user = userMapper.selectById(userId);
+        user.setUserid(userId);
+        user.setPassword(password);
+        user.setCharactor(character);
+        return CommonResponse.createForSuccess("modify User success");
     }
 
     public CommonResponse<User> addUser(String useId,String password,String character)
     {
-
+        User user0 = userMapper.selectById(useId);
+        if(user0!=null)
+        {
+            return CommonResponse.createForError("such User exists");
+        }
+        else
+        {
+            User user = new User();
+            QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("userid", useId).eq("password", password).eq("charactor",character);
+            userMapper.update(user, queryWrapper);
+            return CommonResponse.createForSuccess("add Notice success",user);
+        }
     }
 
     public CommonResponse<User> deleteUser(String useId)
     {
-
+        User user = userMapper.selectById(useId);
+        if(user!=null)
+        {
+            userMapper.deleteById(useId);
+            return CommonResponse.createForSuccess("delete User success",user);
+        }
+        else
+        {
+            return CommonResponse.createForError("no such User");
+        }
     }
 
     public CommonResponse<User> viewOneUser(String useId)
@@ -99,15 +124,53 @@ public class FrontServiceImpl implements FrontService {
 
     public CommonResponse<Notice> addNotice(String adminId,String text)
     {
-
+        Notice notice0 = noticeMapper.selectById(adminId);
+        if(notice0!=null)
+        {
+            return CommonResponse.createForError("such Notice exists");
+        }
+        else
+        {
+            Notice notice = new Notice();
+            QueryWrapper<Notice> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("noticeid", adminId).eq("text", text);
+            noticeMapper.update(notice, queryWrapper);
+            return CommonResponse.createForSuccess("add Notice success",notice);
+        }
     }
 
     public CommonResponse<String> modifyPassword(ModifyPassword modify)
     {
-
+        String getUserId = modify.getUserId();
+        String getPassword = modify.getOldPassword();
+        String getNewPassword = modify.getNewPasswrod();
+        User user = userMapper.selectById(getUserId);
+        if(user==null)
+        {
+            return CommonResponse.createForError("user not exist");
+        }
+        else if(user.getCharactor().equals("back")||user.getCharactor().equals("serve"))
+        {
+            return CommonResponse.createForError("wrong charactor");
+        }
+        else
+        {
+            QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("userid",getUserId).eq("password",getPassword);
+            if(user.getPassword().equals(getPassword))
+            {
+                user.setPassword(getNewPassword);
+                userMapper.update(user,queryWrapper);
+                return CommonResponse.createForSuccess("modify success");
+            }
+            else
+            {
+                return CommonResponse.createForError("wrong password");
+            }
+        }
     }
 
-    public CommonResponse<String> confirm(String orderId)
+    public CommonResponse<String> confirm(String orderId)//结账环节
     {
 
     }
@@ -125,20 +188,31 @@ public class FrontServiceImpl implements FrontService {
         }
     }
 
-    public CommonResponse<Food> addFood(String name,String text,String price,img img)
+    public CommonResponse<Food> addFood(Food food)//和addUser一样
     {
-
+        int result = foodMapper.insert(food);
+        if(result==0)
+        {
+            return CommonResponse.createForError("add Food failed");
+        }
+        return CommonResponse.createForSuccess("add Food success",food);
     }
 
     public CommonResponse<Food> deleteFood(String name)
     {
-
+        Food food = foodMapper.selectById(name);
+        if(food!=null)
+        {
+            userMapper.deleteById(food);
+            return CommonResponse.createForSuccess("delete User success",food);
+        }
+        else
+        {
+            return CommonResponse.createForError("no such User");
+        }
     }
 
-    public CommonResponse<String> modifyFood(String text,String price)
-    {
 
-    }
 
     public CommonResponse<Food> viewOneFood(String name)//和viewOneUser同样思路
     {

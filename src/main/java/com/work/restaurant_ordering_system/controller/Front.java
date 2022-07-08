@@ -87,9 +87,9 @@ public class Front {
     }
 
     @PostMapping(value = "/addFood")
-    CommonResponse<Food> addFood(String name,String text,String price,img img)
+    CommonResponse<Food> addFood(Food food)
     {
-        return frontService.addFood(name, text, price, img);
+        return frontService.addFood(food);
     }
 
     @PostMapping(value = "/deleteFood")
@@ -98,11 +98,6 @@ public class Front {
         return frontService.deleteFood(name);
     }
 
-    @PostMapping(value = "/modifyFood")
-    CommonResponse<String> modifyFood(String text,String price)
-    {
-        return frontService.modifyFood(text, price);
-    }
 
     @PostMapping(value = "/viewOneFood")
     CommonResponse<Food> viewOneFood(String name)

@@ -32,11 +32,9 @@ public interface FrontService {
 
     CommonResponse<List<Food>> viewFood();
 
-    CommonResponse<Food> addFood(String name,String text,String price,img img);
+    CommonResponse<Food> addFood(Food food);
 
     CommonResponse<Food> deleteFood(String name);
-
-    CommonResponse<String> modifyFood(String text,String price);
 
     CommonResponse<Food> viewOneFood(String name);
 
